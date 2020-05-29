@@ -55,7 +55,6 @@ class GraphManager:
 
         if method_name=='WaitForInput':
             print(payload['message'])
-            print('Press <ENTER> to continue...')
             input()
 
     
