@@ -96,7 +96,10 @@ class GraphManager:
             logging.info('Operation parameters missing')
             raise Exception
         
+        # make sure '@apiVersion' comes first. Not sure if,
+        # necessary, but at least to maintain convention.
         op_parameters['@apiVersion'] = self.api_version
+        #
         return self.invoke_module_method(method_name, op_parameters)
 
 
