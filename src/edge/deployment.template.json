@@ -9,7 +9,9 @@
           "settings": {
             "minDockerVersion": "v1.25",
             "loggingOptions": "",
-            "registryCredentials": {}
+            "registryCredentials": {
+            
+            }
           }
         },
         "systemModules": {
@@ -57,7 +59,7 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "mcr.microsoft.com/media/live-video-analytics:0.9.0",
+              "image": "mcr.microsoft.com/media/live-video-analytics:1.0.0",
               "createOptions": {
                 "HostConfig": {
                   "LogConfig": {
@@ -68,7 +70,8 @@
                     }
                   },
                   "Binds": [
-                    "$OUTPUT_VIDEO_FOLDER_ON_DEVICE:/var/media/"
+                    "$OUTPUT_VIDEO_FOLDER_ON_DEVICE:/var/media/",
+                    "$APPDATA_FOLDER_ON_DEVICE:/var/lib/azuremediaservices"
                   ]
                 }
               }
@@ -90,7 +93,6 @@
               }
             }
           }
-
         }
       }
     },
@@ -98,8 +100,7 @@
       "properties.desired": {
         "schemaVersion": "1.0",
         "routes": {
-          "LVAToHub": "FROM /messages/modules/lvaEdge/outputs/* INTO $upstream",
-          "objectCounterToIoTHub": "FROM /messages/modules/objectCounter/outputs/* INTO $upstream"
+          "LVAToHub": "FROM /messages/modules/lvaEdge/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
@@ -117,12 +118,11 @@
         "aadResourceId": "https://management.core.windows.net/",
         "armEndpoint": "https://management.azure.com/",
         "diagnosticsEventsOutputName": "AmsDiagnostics",
-        "OperationalEventsOutputName": "AmsOperational",
-        "debugLogsDirectory": "/var/lib/azuremediaservices/debuglogs/",
+        "operationalEventsOutputName": "AmsOperational",        
         "logLevel": "Information",
         "logCategories": "Application,Event",
-        "AllowUnsecuredEndpoints": "true",
-        "TelemetryOptOut": false
+        "allowUnsecuredEndpoints": "true",
+        "telemetryOptOut": false
       }
     }
   }
