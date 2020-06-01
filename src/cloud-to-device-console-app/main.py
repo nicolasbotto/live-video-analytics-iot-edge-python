@@ -66,14 +66,14 @@ class GraphManager:
             response_timeout_in_seconds=30)
         
         print("\n-----------------------  Request: % s  --------------------------------------------------\n"% method_name)
-        print(payload)
+        print(json.dumps(payload, indent=4))
         
         resp = self.registry_manager.invoke_device_module_method(self.device_id, self.module_id, module_method)
         
         print("\n---------------  Response: % s - Status: % s  ---------------\n"%(method_name, resp.status))
 
         if resp.payload is not None:
-            print(resp.payload)
+            print(json.dumps(resp.payload, indent=4))
 
     def graph_topology_set(self, op_parameters):
         if op_parameters is None:
