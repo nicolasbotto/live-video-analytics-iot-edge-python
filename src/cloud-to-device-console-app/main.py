@@ -59,15 +59,16 @@ class GraphManager:
 
     
     def invoke_module_method(self, method_name, payload):
-        moduleMethod = CloudToDeviceMethod(
+
+        module_method = CloudToDeviceMethod(
             method_name=method_name,
             payload=payload,
             response_timeout_in_seconds=30)
-
+        
         print("\n-----------------------  Request: % s  --------------------------------------------------\n"% method_name)
         print(payload)
         
-        resp = self.registry_manager.invoke_device_module_method(self.device_id, self.module_id, moduleMethod)
+        resp = self.registry_manager.invoke_device_module_method(self.device_id, self.module_id, module_method)
         
         print("\n---------------  Response: % s - Status: % s  ---------------\n"%(method_name, resp.status))
 
@@ -87,9 +88,9 @@ class GraphManager:
         else:
             logging.info('Neither topologyUrl nor topologyFile specified')
 
-        topologyJson = json.loads(topologyJsonString)
+        topology = json.loads(topologyJsonString)
 
-        return self.invoke_module_method('graph_topology_set', topologyJson)
+        return self.invoke_module_method('GraphTopologySet', topology)
 
     def generic_call(self, method_name, op_parameters):
         if op_parameters is None:
