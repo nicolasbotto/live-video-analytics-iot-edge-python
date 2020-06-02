@@ -34,6 +34,7 @@ AAD_SERVICE_PRINCIPAL_ID=""
 AAD_SERVICE_PRINCIPAL_SECRET=""
 OUTPUT_VIDEO_FOLDER_ON_DEVICE=""
 INPUT_VIDEO_FOLDER_ON_DEVICE=""
+APPDATA_FOLDER_ON_DEVICE=""
 ```
 
 To generate a deployment manifest from the template, open your local clone of this git repository in Visual Studio Code, have the [Azure Iot Tools](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.azure-iot-tools) extension installed, right click on the template file and select "Generate IoT Edge deployment manifest". This will create the corresponding deployment manifest file in **./config** folder.
