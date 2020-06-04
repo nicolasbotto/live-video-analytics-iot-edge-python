@@ -6,69 +6,102 @@ import time
 import os
 import sys
 import asyncio
+import json
 from six.moves import input
 import threading
 from azure.iot.device.aio import IoTHubModuleClient
+from azure.iot.device import Message
 
-async def main():
-    try:
-        if not sys.version >= "3.5.3":
-            raise Exception( "The sample requires python 3.5.3+. Current version of Python: %s" % sys.version )
-        print ( "IoT Hub Client for Python" )
+class ModuleObjectCounter:
 
-        # The client object is used to interact with your Azure IoT hub.
-        module_client = IoTHubModuleClient.create_from_edge_environment()
+    def __init__(self):
+        self.object_tag = ''
+        self.object_confidence = 0
 
-        # connect the client.
-        await module_client.connect()
 
-        # define behavior for receiving an input message on input1
-        async def input1_listener(module_client):
-            while True:
-                input_message = await module_client.receive_message_on_input("input1")  # blocking call
-                print("the data in the message received on input1 was ")
-                print(input_message.data)
-                print("custom properties are")
-                print(input_message.custom_properties)
-                print("forwarding mesage to output1")
-                await module_client.send_message_to_output(input_message, "output1")
+    async def main(self):
+        try:
+            if not sys.version >= "3.5.3":
+                raise Exception( "The sample requires python 3.5.3+. Current version of Python: %s" % sys.version )
+            print ( "IoT Hub Client for Python" )
 
-        # define behavior for halting the application
-        def stdin_listener():
-            while True:
-                try:
-                    selection = input("Press Q to quit\n")
-                    if selection == "Q" or selection == "q":
-                        print("Quitting...")
-                        break
-                except:
-                    time.sleep(10)
+            # The client object is used to interact with your Azure IoT hub.
+            module_client = IoTHubModuleClient.create_from_edge_environment()
 
-        # Schedule task for C2D Listener
-        listeners = asyncio.gather(input1_listener(module_client))
+            # connect the client.
+            await module_client.connect()
 
-        print ( "The sample is now waiting for messages. ")
+            # define behavior for receiving an input message on input1
+            async def count_objects_listener(module_client):
+                while True:
+                    input_message = await module_client.receive_message_on_input("detectedObjects")  # blocking call
+                    
+                    count = 0
+                    detected_objects = input_message.custom_properties['inferences']
 
-        # Run the stdin listener in the event loop
-        loop = asyncio.get_event_loop()
-        user_finished = loop.run_in_executor(None, stdin_listener)
+                    if detected_objects is not None:
+                        for inference in detected_objects:
+                            entity = inference['entity']
+                            tag = entity['tag']
 
-        # Wait for user to indicate they are done listening for messages
-        await user_finished
+                            if (tag["value"] == self.object_tag) and (tag["confidence"] > self.object_confidence):
+                                count += 1
+                    
+                    if count > 0:
+                        output_message_string = json.dumps(dict({'count': count}))
 
-        # Cancel listening
-        listeners.cancel()
+                    output_message = Message(output_message_string)
+                    
+                    subject = input_message.custom_properties['subject']
+                    graph_instance_signature = '/graphInstances/'
 
-        # Finally, disconnect
-        await module_client.disconnect()
+                    if graph_instance_signature in subject:
+                        # CSharp sample version is doing nothing with this, so does this Python port (must it?)
+                        graph_instance_name = subject.split('/')[2]
+                        #
+                        output_message.custom_properties['eventTime'] = input_message.custom_properties['eventTime']
+                        await module_client.send_message_to_output(output_message, "objectCountTrigger")
 
-    except Exception as e:
-        print ( "Unexpected error %s " % e )
-        raise
+            
+            # define behavior for halting the application
+            def stdin_listener(self):
+                while True:
+                    try:
+                        selection = input("Press Q to quit\n")
+                        if selection == "Q" or selection == "q":
+                            print("Quitting...")
+                            break
+                    except:
+                        time.sleep(10)
+
+
+            # Schedule task for C2D Listener
+            listeners = asyncio.gather(count_objects_listener(module_client))
+
+            print ( "The sample is now waiting for messages. ")
+
+            # Run the stdin listener in the event loop
+            loop = asyncio.get_event_loop()
+            user_finished = loop.run_in_executor(None, stdin_listener)
+
+            # Wait for user to indicate they are done listening for messages
+            await user_finished
+
+            # Cancel listening
+            listeners.cancel()
+
+            # Finally, disconnect
+            await module_client.disconnect()
+
+        except Exception as e:
+            print ( "Unexpected error %s " % e )
+            raise
 
 if __name__ == "__main__":
+    module = ModuleObjectCounter()
+
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    loop.run_until_complete(module.main())
     loop.close()
 
     # If using Python 3.7 or above, you can use following code instead:
