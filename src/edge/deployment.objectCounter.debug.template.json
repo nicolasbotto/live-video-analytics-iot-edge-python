@@ -113,8 +113,21 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.objectCounter}",
-              "createOptions": {}
+              "image": "${MODULES.objectCounter.debug}",
+              "createOptions": {
+                "ExposedPorts": {
+                  "5678/tcp": {}
+                },
+                "HostConfig": {
+                  "PortBindings": {
+                    "5678/tcp": [
+                      {
+                        "HostPort": "5678"
+                      }
+                    ]
+                  }
+                }
+              }
             }
           }
         }
