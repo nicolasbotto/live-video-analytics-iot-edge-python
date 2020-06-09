@@ -28,7 +28,7 @@ async def main():
                     data = await module_client.receive_twin_desired_properties_patch()  # blocking call
                     print('The data in the desired properties patch was: %s' % data)
                     if 'objectTag' in data:
-                        OBJECT_TAG = data["objectTag"]
+                        OBJECT_TAG = data['objectTag']
                     if 'objectConfidence' in data:
                         OBJECT_CONFIDENCE = data['objectConfidence']
                     TWIN_CALLBACKS += 1
@@ -41,14 +41,14 @@ async def main():
             global OBJECT_CONFIDENCE
 
             while True:
-                input_message = await module_client.receive_message_on_input("detectedObjects")  # blocking call    
-
+                input_message = await module_client.receive_message_on_input('detectedObjects')  # blocking call    
+                
                 if input_message is not None:
                     message = input_message.data
                     size = len(message)
                     message_text = message.decode('utf-8')
                     count = 0
-
+                    
                     #
                     data = json.loads(message_text)
                     #
@@ -58,13 +58,12 @@ async def main():
                         for inference in detected_objects:
                             entity = inference['entity']
                             tag = entity['tag']
-
-                            if (tag["value"] == OBJECT_TAG) and (tag["confidence"] > OBJECT_CONFIDENCE):
+                            
+                            if (tag['value'] == OBJECT_TAG) and (tag['confidence'] > OBJECT_CONFIDENCE):
                                 count += 1
 
                         if count > 0:
                             output_message_string = json.dumps(dict({'count': count}))
-
                             output_message = Message(output_message_string, content_encoding='utf-8')
                             
                             subject = input_message.custom_properties['subject']
@@ -95,7 +94,7 @@ async def main():
         print("IoT Hub Client for Python")
 
         # The client object is used to interact with your Azure IoT hub.
-        module_client = IoTHubModuleClient.create_from_edge_environment()
+        module_client = IoTHubModuleClient.create_from_edge_environment(websockets=True)
 
         # connect the client.
         await module_client.connect()
@@ -124,9 +123,9 @@ async def main():
 
 if __name__ == "__main__":
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-    loop.close()
+    #loop = asyncio.get_event_loop()
+    #loop.run_until_complete(main())
+    #loop.close()
 
     # If using Python 3.7 or above, you can use following code instead:
-    # asyncio.run(main())
+    asyncio.run(main())
