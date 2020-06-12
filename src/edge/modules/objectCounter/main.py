@@ -9,6 +9,7 @@ import json
 from six.moves import input
 from azure.iot.device.aio import IoTHubModuleClient
 from azure.iot.device import Message
+import logging
 
 OBJECT_TAG = 'truck'
 OBJECT_CONFIDENCE = 0.5
@@ -48,7 +49,7 @@ async def main():
                     size = len(message)
                     message_text = message.decode('utf-8')
                     count = 0
-                    
+                    print(message_text)
                     #
                     data = json.loads(message_text)
                     #
@@ -92,6 +93,11 @@ async def main():
         if not sys.version >= "3.5.3":
             raise Exception("The sample requires python 3.5.3+. Current version of Python: %s" % sys.version)
         print("IoT Hub Client for Python")
+
+        logging.basicConfig(
+            format='%(asctime)s %(name)-20s %(levelname)-5s %(message)s',
+            level=logging.DEBUG
+        )
 
         # The client object is used to interact with your Azure IoT hub.
         module_client = IoTHubModuleClient.create_from_edge_environment(websockets=True)
