@@ -5,6 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "AMS Asset Player - Python/Flask",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "${workspaceFolder}/src/ams-asset-player/amsassetplayer.py",
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "0"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload",
+                "--port", "8000",
+                "--host", "0.0.0.0"
+            ],
+            "jinja": true
+        },
+        {
             "name": "Remote Debug IoT Edge Module (Python)",
             "type": "python",
             "request": "attach",
