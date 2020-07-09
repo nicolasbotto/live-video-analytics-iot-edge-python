@@ -6,11 +6,10 @@ This directory contains a dotnet core sample app that would enable you to invoke
 
 | File/folder             | Description                                                   |
 |-------------------------|---------------------------------------------------------------|
-| `c2d-console-app.csproj`| Project file.                                                 |
 | `.gitignore`            | Define what to ignore at commit time.                         |
 | `README.md`             | This README file.                                             |
 | `operations.json`       | JSON file defining the sequence of operations to execute upon.|
-| `Program.cs`            | The main program file                                         |
+| `main.py`               | The main program file                                         |
 
 ## Setup
 
