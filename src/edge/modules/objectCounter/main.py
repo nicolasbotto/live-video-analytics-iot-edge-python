@@ -46,7 +46,6 @@ async def main():
                 
                 if input_message is not None:
                     message = input_message.data
-                    size = len(message)
                     message_text = message.decode('utf-8')
                     count = 0
                     print(message_text)
@@ -71,10 +70,6 @@ async def main():
                             graph_instance_signature = '/graphInstances/'
 
                             if graph_instance_signature in subject:
-                                # CSharp sample version is doing nothing with this, so does this Python port (must it?)
-                                graph_instance_name = subject.split('/')[2]
-                                #output_message.custom_properties['eventTarget'] = graph_instance_name
-                                #
                                 output_message.custom_properties['eventTime'] = input_message.custom_properties['eventTime']
                                 await module_client.send_message_to_output(output_message, "objectCountTrigger")
                     except:
