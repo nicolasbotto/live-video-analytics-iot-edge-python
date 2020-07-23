@@ -1,6 +1,0 @@
-Flask
-freeze
-azure-mgmt-resource
-azure-mgmt-media
-python-dotenv
-pandas
