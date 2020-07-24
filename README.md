@@ -13,10 +13,6 @@ description: "The samples in this repo show how to use the Live Video Analytics 
 
 This repo provides samples for Live Video Analytics on IoT Edge
 
-## Key concepts
-
-Provide users with more context on the tools and services used in the sample. Explain some of the code that is being used and how services interact with each other.
-
 ## Contents
 
 Outline the file contents of the repository. It helps users navigate the codebase, build configuration and any related assets.
@@ -30,18 +26,50 @@ Outline the file contents of the repository. It helps users navigate the codebas
 | `README.md`       | This README file.                          |
 | `LICENSE`         | The license for the sample.                |
 
+The 'src' folder contains three sub-folders
+
+* **cloud-to-device-console-app** - This folder contains a Python app that enables you to invoke direct methods of Live Video Analytics on IoT Edge module, with parameters defined by you in a JSON file (operations.json).
+* **edge** - This folder has a few IoT Edge deployment manifest templates, along with sample code for an IoT Edge module (under 'modules' folder) that can be used in conjunction with the Live Video Analytics on IoT Edge module.
+* **ams-asset-player** - This folder contains a Python app that showcases how you can playback assets recorded by Live Video Analytics on IoT Edge (in the Azure Media Services account referenced in the module twin properties).
+
 ## Prerequisites
 
-Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases.
+1. An active Azure subscription
+2. Azure resources deployed in the Azure subscription
+
+    a. IoT Hub
+
+    b. Storage Account
+
+    c. Media Services
+
+    d. Azure container registry
+
+3. A Linux edge device with [IoT Edge runtime](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge-linux)
+
+4. [Visual Studio Code](https://code.visualstudio.com/) on your development machine with following extensions
+
+    a. [Azure IoT Tools](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.azure-iot-tools)
+
+    b. [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+
+5. [Docker](https://docs.docker.com/engine/install/) on your development machine
+
+You can use the [LVA resources setup script](https://github.com/Azure/live-video-analytics/tree/master/edge/setup) to deploy the Azure resources mentioned above, along with an Azure Linux VM to serve as your IoT Edge device.
 
 ## Setup
 
-Explain how to prepare the sample once the user clones or downloads the repository. The section should outline every step necessary to install dependencies and set up any settings (for example, API keys and output folders).
+After cloning the repository, follow instructions outlined in **src/cloud-to-device-console-app/readme.md** to setup the console app and instructions in **src/ams-asset-player/readme.md** to setup the Python app.
 
 ## Running the sample
 
-Outline step-by-step instructions to execute the sample and see its output. Include steps for executing the sample from the IDE, starting specific services in the Azure portal or anything related to the overall launch of the code.
+Follow instructions outlined in **src/cloud-to-device-console-app/readme.md** to run the console app and instructions in **src/ams-asset-player/readme.md** to run the Python app.
 
 ## Key concepts
 
-Provide users with more context on the tools and services used in the sample. Explain some of the code that is being used and how services interact with each other.
+Read [Live Video Analytics on IoT Edge concepts](https://docs.microsoft.com/en-us/azure/media-services/live-video-analytics-edge/overview)
+
+## Code of conduct
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
