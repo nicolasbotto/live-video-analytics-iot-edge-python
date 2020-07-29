@@ -10,6 +10,8 @@ This directory contains a dotnet core sample app that would enable you to invoke
 | `README.md`             | This README file.                                             |
 | `operations.json`       | JSON file defining the sequence of operations to execute upon.|
 | `main.py`               | The main program file                                         |
+| `requirements.txt`      | List of all dependent Python libraries                        |
+
 
 ## Setup
 
@@ -27,7 +29,8 @@ Create a file named appsettings.json in this folder. Add the following text and 
 * **deviceId** - Refers to your IoT Edge device id (registered with your IoT hub)
 * **moduleId** - Refers to the module id of LVA on IoT Edge module (when deployed to the IoT Edge device)
 
-Running [LVA resources setup script](https://github.com/Azure/live-video-analytics/tree/master/edge/setup), generates **appsettings.json** file with values pre-filled by the script.
+> [!TIP]
+> Running [LVA resources setup script](https://github.com/Azure/live-video-analytics/tree/master/edge/setup), generates **appsettings.json** file with values pre-filled by the script.
 
 Create a file named .env in src/edge folder and add the following text to it. Provide values for all variables.
 
@@ -44,7 +47,8 @@ OUTPUT_VIDEO_FOLDER_ON_DEVICE=""
 INPUT_VIDEO_FOLDER_ON_DEVICE=""
 ```
 
-Running [LVA resources setup script](https://github.com/Azure/live-video-analytics/tree/master/edge/setup) generates the **.env** file with values pre-filled by the script.
+> [!TIP]
+> Running [LVA resources setup script](https://github.com/Azure/live-video-analytics/tree/master/edge/setup) generates the **.env** file with values pre-filled by the script.
 
 ## Running the sample
 
