@@ -11,20 +11,18 @@ description: "The samples in this repo show how to use the Live Video Analytics 
 
 # Live Video Analytics on IoT Edge samples
 
-This repo provides samples for Live Video Analytics on IoT Edge
+This repo provides Python samples for Live Video Analytics on IoT Edge
 
 ## Contents
 
-Outline the file contents of the repository. It helps users navigate the codebase, build configuration and any related assets.
-
-| File/folder       | Description                                |
-|-------------------|--------------------------------------------|
-| `src`             | Sample source code.                        |
-| `.gitignore`      | Define what to ignore at commit time.      |
-| `CHANGELOG.md`    | List of changes to the sample.             |
-| `CONTRIBUTING.md` | Guidelines for contributing to the sample. |
-| `README.md`       | This README file.                          |
-| `LICENSE`         | The license for the sample.                |
+| File/folder          | Description                                |
+|----------------------|--------------------------------------------|
+| `src`                | Sample source code.                        |
+| `.gitignore`         | Defines what to ignore at commit time.     |
+| `README.md`          | This README file.                          |
+| `LICENSE`            | The license for the sample.                |
+| `SECURITY`           | Guidelines for reporting security issues   |
+| `CODE_OF_CONDUCT.md` | Open source code of conduct                |
 
 The 'src' folder contains three sub-folders
 
@@ -55,7 +53,8 @@ The 'src' folder contains three sub-folders
 
 5. [Docker](https://docs.docker.com/engine/install/) on your development machine
 
-You can use the [LVA resources setup script](https://github.com/Azure/live-video-analytics/tree/master/edge/setup) to deploy the Azure resources mentioned above, along with an Azure Linux VM to serve as your IoT Edge device.
+> [!TIP]
+> You can use the [LVA resources setup script](https://github.com/Azure/live-video-analytics/tree/master/edge/setup) to deploy the Azure resources mentioned above, along with an Azure Linux VM to serve as your IoT Edge device.
 
 ## Setup
 
