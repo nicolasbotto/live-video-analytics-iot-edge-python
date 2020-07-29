@@ -59,11 +59,11 @@ You can use the [LVA resources setup script](https://github.com/Azure/live-video
 
 ## Setup
 
-After cloning the repository, follow instructions outlined in **src/cloud-to-device-console-app/readme.md** to setup the console app and instructions in **src/ams-asset-player/readme.md** to setup the Python app.
+After cloning the repository, follow instructions outlined in **src/cloud-to-device-console-app/readme.md** to setup the console app and instructions in **src/ams-asset-player/readme.md** to setup the player app.
 
 ## Running the sample
 
-Follow instructions outlined in **src/cloud-to-device-console-app/readme.md** to run the console app and instructions in **src/ams-asset-player/readme.md** to run the Python app.
+Follow instructions outlined in **src/cloud-to-device-console-app/readme.md** to run the console app and instructions in **src/ams-asset-player/readme.md** to run the player app.
 
 ## Key concepts
 
