@@ -64,7 +64,7 @@
         {
             "opName": "WaitForInput",
             "opParams": {
-                "message": "The topology will now be deactivated. Press Enter to continue"
+                "message": "The graph instance has been activated. Press Enter to continue and deactivate the graph instance."
             }
         },
         {
