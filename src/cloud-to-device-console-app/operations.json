@@ -24,7 +24,7 @@
         {
             "opName": "GraphTopologySet",
             "opParams": {
-                "topologyUrl": "https://raw.githubusercontent.com/Azure/live-video-analytics/master/MediaGraph/topologies/evr-hubMessage-assets/topology.json"
+                "topologyUrl": "https://raw.githubusercontent.com/Azure/live-video-analytics/master/MediaGraph/topologies/motion-detection/topology.json"
             }
         },
         {
@@ -32,7 +32,7 @@
             "opParams": {
                 "name": "Sample-Graph-1",
                 "properties": {
-                    "topologyName": "EVRtoAssetsOnObjDetect",
+                    "topologyName": "MotionDetection",
                     "description": "Sample graph description",
                     "parameters": [
                         {
@@ -92,7 +92,7 @@
         {
             "opName": "GraphTopologyDelete",
             "opParams": {
-                "name": "EVRtoAssetsOnObjDetect"
+                "name": "MotionDetection "
             }
         },
         {
