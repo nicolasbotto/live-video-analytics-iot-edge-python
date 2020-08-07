@@ -33,7 +33,7 @@
                 "name": "Sample-Graph-1",
                 "properties": {
                     "topologyName": "MotionDetection",
-                    "description": "Analyzing live video to detect motion and emit events",
+                    "description": "Sample graph description",
                     "parameters": [
                         {
                             "name": "rtspUrl",
