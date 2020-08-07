@@ -92,7 +92,11 @@
         {
             "opName": "GraphTopologyDelete",
             "opParams": {
+<<<<<<< HEAD
                 "name": "MotionDetection"
+=======
+                "name": "MotionDetection "
+>>>>>>> cb2c1197c5b92944c1aa2426994858c930b33785
             }
         },
         {
