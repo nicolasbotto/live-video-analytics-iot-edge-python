@@ -9,6 +9,10 @@ products:
 description: "The samples in this repo show how to use the Live Video Analytics on IoT Edge that enables you to capture, record, and analyze videos using AI."  
 ---
 
+```diff
+- Currently, we are experiencing a downtime on one of our dependent APIs, impacting the running of this sample. Track the bug: https://github.com/Azure/azure-iot-sdk-python/issues/661
+```
+
 # Live Video Analytics on IoT Edge samples
 
 This repo provides Python samples for Live Video Analytics on IoT Edge
