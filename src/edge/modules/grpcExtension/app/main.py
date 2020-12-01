@@ -33,7 +33,10 @@ def Main():
         logging.info('gRPC server port with: {0}'.format(grpcServerPort))
 
         # create gRPC server and start running
-        server = grpc.server(futures.ThreadPoolExecutor(max_workers=3))
+        server = grpc.server(futures.ThreadPoolExecutor(max_workers=3), options=[
+          ('grpc.max_send_message_length', 50 * 1024 * 1024),
+          ('grpc.max_receive_message_length', 50 * 1024 * 1024)
+        ])
         extension_pb2_grpc.add_MediaGraphExtensionServicer_to_server(InferenceServer(), server)
         server.add_insecure_port(f'[::]:{grpcServerPort}')
         server.start()

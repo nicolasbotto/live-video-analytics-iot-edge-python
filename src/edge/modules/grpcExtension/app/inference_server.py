@@ -60,8 +60,19 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
         self.processor = BatchImageProcessor()
         return
 
-    def ProcessMediaSample(self, clientState, mediaStreamMessageRequest):
-        mgs = None
+    def ProcessMediaSample(self, mediaStreamMessage, imageDetails):
+        #Get media content bytes. (bytes sent over shared memory buffer, segment or inline to message)  
+        try:
+            rawBytes, size = imageDetails
+            return self.processor.ProcessImages(mediaStreamMessage, rawBytes, size)
+       
+        except:
+            PrintGetExceptionDetails()
+            raise
+        
+        return None
+
+    def GetImageDetails(self, clientState, mediaStreamMessageRequest):
         #Get media content bytes. (bytes sent over shared memory buffer, segment or inline to message)  
         try:
             # Get reference to raw bytes
@@ -75,23 +86,18 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
                 # Get memory reference to (in readonly mode) data sent over shared memory
                 rawBytes = clientState._sharedMemoryManager.ReadBytes(addressOffset, lengthBytes)
 
-            # Get encoding details of the media sent by client
-            encoding = clientState._mediaStreamDescriptor.media_descriptor.video_frame_sample_format.encoding                        
-
-            # Handle RAW content (Just place holder for the user to handle each variation...)
+             # Handle RAW content (Just place holder for the user to handle each variation...)
             if encoding == clientState._mediaStreamDescriptor.media_descriptor.video_frame_sample_format.Encoding.RAW:
                 width = clientState._mediaStreamDescriptor.media_descriptor.video_frame_sample_format.dimensions.width
                 height = clientState._mediaStreamDescriptor.media_descriptor.video_frame_sample_format.dimensions.height
 
-                return self.processor.ProcessImages(rawBytes, (width, height))                                           
+                return rawBytes, (width, height)
             else:
-                logging.info('Sample format is not RAW')
+                raise Exception('Sample format is not RAW')
         
         except:
             PrintGetExceptionDetails()
             raise
-        
-        return mgs
 
     def ProcessMediaStream(self, requestIterator, context):
         # Below logic can be extended into multi-process (per CPU cores, i.e. in case using CPU inferencing)
@@ -129,6 +135,8 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
         height = clientState._mediaStreamDescriptor.media_descriptor.video_frame_sample_format.dimensions.height
  
         # Process rest of the MediaStream message sequence
+        messageCount = 1
+        imageBatch = []
         for mediaStreamMessageRequest in requestIterator:
             try:
                 # Read request id, sent by client
@@ -137,9 +145,26 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
                         
                 logging.info('[Received] SequenceNum: {0:07d}'.format(requestSeqNum))
 
-                # Process message              
-                mediaStreamMessage = self.ProcessMediaSample(clientState, mediaStreamMessageRequest)
+                imageDetails = self.GetImageDetails(clientState, mediaStreamMessageRequest)
+
+                if(messageCount < batchSize):
+                    mediaStreamMessage = extension_pb2.MediaStreamMessage(
+                                            sequence_number = responseSeqNum,
+                                            ack_sequence_number = requestSeqNum
+                                            )
+                    imageBatch.append(imageDetails)    
+                    messageCount += 1
+                    # Send acknowledge message to client 
+                    yield mediaStreamMessage
+
+                # Process message
+                mediaStreamMessage = extension_pb2.MediaStreamMessage()
+                for image in imageBatch:
+                    mediaStreamMessage = self.ProcessMediaSample(mediaStreamMessage, image)
                 
+                imageBatch.clear()
+                messageCount = 1
+
                 # Increment request sequence number
                 responseSeqNum += 1
 

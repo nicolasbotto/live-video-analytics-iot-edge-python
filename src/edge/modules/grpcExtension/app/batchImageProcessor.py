@@ -11,7 +11,7 @@ class BatchImageProcessor():
     def __init__(self):
         return
     
-    def ProcessImages(self, rawBytes, size):
+    def ProcessImages(self, mediaStreamMessage, rawBytes, size):
         # Read image raw bytes
         im = Image.frombytes('RGB', size, rawBytes.tobytes())
         draw = ImageDraw.Draw(im)
@@ -33,8 +33,7 @@ class BatchImageProcessor():
 
         logging.info('Color intensity: {}'.format(colorIntensity))
         
-        message = extension_pb2.MediaStreamMessage()
-        inference = message.media_sample.inferences.add()
+        inference = mediaStreamMessage.media_sample.inferences.add()
         inference.subtype = 'colorIntensity'
         classification = inferencing_pb2.Classification(
                                         tag = inferencing_pb2.Tag(
@@ -44,4 +43,4 @@ class BatchImageProcessor():
                                     )
         inference.classification.CopyFrom(classification)
 
-        return message
+        return mediaStreamMessage
