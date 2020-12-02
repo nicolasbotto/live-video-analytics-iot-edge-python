@@ -27,7 +27,7 @@ def Main():
             grpcServerPort = _arguments.p[0]
 
         # Default batch size 1
-        batchSize = 10
+        batchSize = 1
          # Get batch size
         if (_arguments.b is not None):          
             batchSize = _arguments.b[0]
