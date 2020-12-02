@@ -36,10 +36,12 @@ In this method we:
 1. Read and validate the MediaStreamDescriptor (it is the first message sent by the client).
 2. If the media stream descriptor is valid, the gRPC reads and analyzes the sequence of media samples containing the video frame, and returns inference results as a protobuf message.
 
+**Note:** this method supports batch processing, it uses the batchSize property to specify the number of the batch.
+
 *batchImageProcessor.py*: this class is responsible for processing the image. In a nutshell, it reads the raw bytes, converts an image to grayscale and determines if its color intensity is dark or light. You can add your own processor logic by adding a new class and implementing the method:
 
 ```
-ProcessImages(self, rawBytes, size):
+ProcessImages(self, mediaStreamMessage, rawBytes, size):
 ```
 Once you've added the new class, you'll have to update the InferenceServer so it instantiates your class and invokes the **ProcessImage** method on it to run your processing logic.
 
@@ -67,7 +69,7 @@ sudo docker push myregistry.azurecr.io/grpcextension:1
 
 Then, from the box where the container should execute, run this command:
 
-`sudo docker run -d -p 5001:5001 --name grpcextension myregistry.azurecr.io/grpcextension:1 -p 5001`
+`sudo docker run -d -p 5001:5001 --name grpcextension myregistry.azurecr.io/grpcextension:1 -p 5001 -b 1`
 
 Let's decompose it a bit:
 
@@ -75,6 +77,7 @@ Let's decompose it a bit:
 * `--name`: the name of the running container.
 * `registry/image:tag`: replace this with the corresponding location/image:tag where you've pushed the image built from the `Dockerfile`
 * `-p`: the port the gRPC server will listen on
+* `-b`: the size of the batch
 
 ### Updating references into Topologies, to target the gRPC Extension Address
 The [gRPCExtension topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGraph/topologies/grpcExtension/topology.json) must define an gRPC Extension Address:
@@ -142,7 +145,7 @@ Shared memory:
 }
 ```
 
-**Note:** When communicating over shared memory the LVA container must have its IPC mode set to shareable and container:lvaEdge for the gRPC extension module, where lvaEdge is the name of the LVA module.
+**Note:** When communicating over shared memory the LVA container and the gRPC extension module must have its IPC mode set to host.
 LVA module:
 ```JSON
 {
@@ -153,7 +156,7 @@ LVA module:
                 "max-file": "10"
             }
         },
-        "IpcMode": "shareable"
+        "IpcMode": "host"
     }
 }
 ```
@@ -168,7 +171,7 @@ gRPC extension module:
                 "max-file": "10"
             }
         },
-        "IpcMode": "container:lvaEdge"
+        "IpcMode": "host"
     }
 }
 ```
