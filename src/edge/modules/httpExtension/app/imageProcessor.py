@@ -6,7 +6,7 @@ import io
 import numpy as np
 import cv2 as cv
 
-class BatchImageProcessor():
+class ImageProcessor():
     def __init__(self):
         return
     

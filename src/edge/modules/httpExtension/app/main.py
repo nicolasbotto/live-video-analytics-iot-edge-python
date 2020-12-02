@@ -10,7 +10,7 @@ import time
 from flask import Flask, Response, Request, abort, request
 import requests
 import argparse
-from batchImageProcessor import BatchImageProcessor
+from imageProcessor import ImageProcessor
 
 def init_logging():
     gunicorn_logger = logging.getLogger('gunicorn.error')
@@ -35,7 +35,7 @@ app = Flask(__name__)
 
 init_logging()
 
-processor = BatchImageProcessor()
+processor = ImageProcessor()
 app.logger.info('Http extension listening on port: {}'.format(httpServerPort))
 
 # /score routes to scoring function 
