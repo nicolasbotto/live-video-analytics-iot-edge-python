@@ -20,13 +20,13 @@ Main()
 In this method we:
 1. Create an instance of http extension server.
 2. Create an instance of the image processor.
-3. Define a route for handing the client requests.
+3. Define a route for handling the client requests.
 4. Set the address and port the http extension server will listen on for client requests.
 
 *imageProcessor.py*: this class is responsible for processing the image. In a nutshell, it reads the raw bytes, converts an image to grayscale and determines if its color intensity is dark or light. You can add your own processor logic by adding a new class and implementing the method:
 
 ```
-ProcessImages(self, mediaStreamMessage, rawBytes, size):
+ProcessImages(self, imgBytes):
 ```
 Once you've added the new class, you'll have to update the InferenceServer so it instantiates your class and invokes the **ProcessImage** method on it to run your processing logic.
 
@@ -37,7 +37,7 @@ To build the image, use the Docker file named `Dockerfile`.
 First, a couple assumptions
 
 * We'll be using Azure Container Registry (ACR) to publish our image before distributing it
-* Our local Docker container image is already loged into ACR.
+* Our local Docker container image is already logged into ACR.
 * In this sample, our ACR name is "myregistry". Your name may defer, so please update it properly in the following commands.
 
 > If you're unfamiliar with ACR or have any questions, please follow this [demo on building and pushing an image into ACR](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-docker-cli).
