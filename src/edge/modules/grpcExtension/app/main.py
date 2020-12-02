@@ -15,6 +15,8 @@ def Main():
         parser = argparse.ArgumentParser()
         parser.add_argument('-p', nargs=1, metavar=('grpc_server_port'),
                                         help='Port number to serve gRPC server.')
+        parser.add_argument('-b', nargs=1, metavar=('batch_size'),
+                                        help='Batch size.')
     
         _arguments = parser.parse_args()
 
@@ -23,6 +25,12 @@ def Main():
         # Get port number
         if (_arguments.p is not None):          
             grpcServerPort = _arguments.p[0]
+
+        # Default batch size 1
+        batchSize = 10
+         # Get batch size
+        if (_arguments.b is not None):          
+            batchSize = _arguments.b[0]
         
         # Get port from environment variable (overrides argument)
         envPort = os.getenv('port')
@@ -33,11 +41,8 @@ def Main():
         logging.info('gRPC server port with: {0}'.format(grpcServerPort))
 
         # create gRPC server and start running
-        server = grpc.server(futures.ThreadPoolExecutor(max_workers=3), options=[
-          ('grpc.max_send_message_length', 50 * 1024 * 1024),
-          ('grpc.max_receive_message_length', 50 * 1024 * 1024)
-        ])
-        extension_pb2_grpc.add_MediaGraphExtensionServicer_to_server(InferenceServer(), server)
+        server = grpc.server(futures.ThreadPoolExecutor(max_workers=3))
+        extension_pb2_grpc.add_MediaGraphExtensionServicer_to_server(InferenceServer(batchSize), server)
         server.add_insecure_port(f'[::]:{grpcServerPort}')
         server.start()
         server.wait_for_termination()

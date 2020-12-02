@@ -56,8 +56,9 @@ class State:
             raise
 
 class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
-    def __init__(self):
+    def __init__(self, batchSize):
         self.processor = BatchImageProcessor()
+        self.batchSize = batchSize
         return
 
     def ProcessMediaSample(self, mediaStreamMessage, imageDetails):
@@ -86,7 +87,10 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
                 # Get memory reference to (in readonly mode) data sent over shared memory
                 rawBytes = clientState._sharedMemoryManager.ReadBytes(addressOffset, lengthBytes)
 
-             # Handle RAW content (Just place holder for the user to handle each variation...)
+            # Get encoding details of the media sent by client
+            encoding = clientState._mediaStreamDescriptor.media_descriptor.video_frame_sample_format.encoding    
+
+            # Handle RAW content (Just place holder for the user to handle each variation...)
             if encoding == clientState._mediaStreamDescriptor.media_descriptor.video_frame_sample_format.Encoding.RAW:
                 width = clientState._mediaStreamDescriptor.media_descriptor.video_frame_sample_format.dimensions.width
                 height = clientState._mediaStreamDescriptor.media_descriptor.video_frame_sample_format.dimensions.height
@@ -135,7 +139,7 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
         height = clientState._mediaStreamDescriptor.media_descriptor.video_frame_sample_format.dimensions.height
  
         # Process rest of the MediaStream message sequence
-        messageCount = 1
+        messageCount = 0
         imageBatch = []
         for mediaStreamMessageRequest in requestIterator:
             try:
@@ -147,38 +151,40 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
 
                 imageDetails = self.GetImageDetails(clientState, mediaStreamMessageRequest)
 
-                if(messageCount < batchSize):
+                if(messageCount < self.batchSize):
+                    # Add images to batch and create acknowledge message
+                    logging.info('Adding image #{0} to batch.'.format(messageCount+1))
                     mediaStreamMessage = extension_pb2.MediaStreamMessage(
                                             sequence_number = responseSeqNum,
                                             ack_sequence_number = requestSeqNum
                                             )
                     imageBatch.append(imageDetails)    
                     messageCount += 1
-                    # Send acknowledge message to client 
-                    yield mediaStreamMessage
-
-                # Process message
-                mediaStreamMessage = extension_pb2.MediaStreamMessage()
-                for image in imageBatch:
-                    mediaStreamMessage = self.ProcessMediaSample(mediaStreamMessage, image)
-                
-                imageBatch.clear()
-                messageCount = 1
-
-                # Increment request sequence number
-                responseSeqNum += 1
-
-                if(mediaStreamMessage is None):
-                    # Respond with message without inferencing
-                    mediaStreamMessage = extension_pb2.MediaStreamMessage()     
-                    responseStatusMessage = "empty message for request seq = " + str(mediaStreamMessage.ack_sequence_number) + " response seq = " + str(responseSeqNum)
                 else:
-                    responseStatusMessage = "responding for message with request seq = " + str(mediaStreamMessage.ack_sequence_number) + " response seq = " + str(responseSeqNum)
+                    # Process batch
+                    logging.info('Processing batch ({0}).'.format(messageCount))
+                    mediaStreamMessage = extension_pb2.MediaStreamMessage()
+                    for image in imageBatch:
+                        mediaStreamMessage = self.ProcessMediaSample(mediaStreamMessage, image)
 
-                logging.info(responseStatusMessage)
-                mediaStreamMessage.sequence_number = responseSeqNum
-                mediaStreamMessage.ack_sequence_number = mediaStreamMessageRequest.sequence_number
-                mediaStreamMessage.media_sample.timestamp = mediaStreamMessageRequest.media_sample.timestamp
+                    # Increment request sequence number
+                    responseSeqNum += 1
+
+                    if(mediaStreamMessage is None):
+                        # Respond with message without inferencing
+                        mediaStreamMessage = extension_pb2.MediaStreamMessage()     
+                        responseStatusMessage = "empty message for request seq = " + str(mediaStreamMessage.ack_sequence_number) + " response seq = " + str(responseSeqNum)
+                    else:
+                        responseStatusMessage = "responding for message with request seq = " + str(mediaStreamMessage.ack_sequence_number) + " response seq = " + str(responseSeqNum)
+
+                    logging.info(responseStatusMessage)
+                    mediaStreamMessage.sequence_number = responseSeqNum
+                    mediaStreamMessage.ack_sequence_number = mediaStreamMessageRequest.sequence_number
+                    mediaStreamMessage.media_sample.timestamp = mediaStreamMessageRequest.media_sample.timestamp
+
+                    # Clear batch
+                    imageBatch.clear()
+                    messageCount = 0
 
                 if context.is_active():
                     # yield response                        
