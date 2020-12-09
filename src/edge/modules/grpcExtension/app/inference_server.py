@@ -1,19 +1,12 @@
 import sys
-
 import logging
 import os
-#import cv2
-
-from queue import Queue
-
 import inferencing_pb2
 import media_pb2
 import extension_pb2
 import extension_pb2_grpc
 from batchImageProcessor import BatchImageProcessor
-
 from enum import Enum
-
 from shared_memory import SharedMemoryManager
 from exception_handler import PrintGetExceptionDetails
 
@@ -26,7 +19,7 @@ DEBUG_OUTPUT_FOLDER = os.getenv('DebugOutputFolder')
 class TransferType(Enum):
     BYTES = 1           # Embedded Content
     REFERENCE = 2       # Shared Memory
-    HANDLE = 3          # Reserverd...
+    HANDLE = 3          # Reserved...
 
 class State:
     def __init__(self, mediaStreamDescriptor):
@@ -39,8 +32,6 @@ class State:
                 self._contentTransferType = TransferType.BYTES
             elif self._mediaStreamDescriptor.HasField("shared_memory_buffer_transfer_properties"):
                 self._contentTransferType = TransferType.REFERENCE
-            elif self._mediaStreamDescriptor.HasField("shared_memory_segments_transfer_properties"):
-                self._contentTransferType = TransferType.HANDLE
 
             # Setup if shared mem used
             if self._contentTransferType == TransferType.REFERENCE:
@@ -61,11 +52,11 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
         self.batchSize = batchSize
         return
 
-    def ProcessMediaSample(self, mediaStreamMessage, imageDetails):
+    def process_media_sample(self, mediaStreamMessage, imageDetails):
         #Get media content bytes. (bytes sent over shared memory buffer, segment or inline to message)  
         try:
             rawBytes, size = imageDetails
-            return self.processor.ProcessImages(mediaStreamMessage, rawBytes, size)
+            return self.processor.process_images(mediaStreamMessage, rawBytes, size)
        
         except:
             PrintGetExceptionDetails()
@@ -73,7 +64,7 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
         
         return None
 
-    def GetImageDetails(self, clientState, mediaStreamMessageRequest):
+    def get_image_details(self, clientState, mediaStreamMessageRequest):
         #Get media content bytes. (bytes sent over shared memory buffer, segment or inline to message)  
         try:
             # Get reference to raw bytes
@@ -149,7 +140,9 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
                         
                 logging.info('[Received] SequenceNum: {0:07d}'.format(requestSeqNum))
 
-                imageDetails = self.GetImageDetails(clientState, mediaStreamMessageRequest)
+                imageDetails = self.get_image_details(clientState, mediaStreamMessageRequest)
+                # Increment request sequence number
+                responseSeqNum += 1
 
                 if(messageCount < self.batchSize):
                     # Add images to batch and create acknowledge message
@@ -165,10 +158,7 @@ class InferenceServer(extension_pb2_grpc.MediaGraphExtensionServicer):
                     logging.info('Processing batch ({0}).'.format(messageCount))
                     mediaStreamMessage = extension_pb2.MediaStreamMessage()
                     for image in imageBatch:
-                        mediaStreamMessage = self.ProcessMediaSample(mediaStreamMessage, image)
-
-                    # Increment request sequence number
-                    responseSeqNum += 1
+                        mediaStreamMessage = self.process_media_sample(mediaStreamMessage, image)
 
                     if(mediaStreamMessage is None):
                         # Respond with message without inferencing

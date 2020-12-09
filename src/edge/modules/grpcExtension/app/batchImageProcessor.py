@@ -11,7 +11,7 @@ class BatchImageProcessor():
     def __init__(self):
         return
     
-    def ProcessImages(self, mediaStreamMessage, rawBytes, size):
+    def process_images(self, mediaStreamMessage, rawBytes, size):
         # Read image raw bytes
         im = Image.frombytes('RGB', size, rawBytes.tobytes())
         draw = ImageDraw.Draw(im)
@@ -26,10 +26,8 @@ class BatchImageProcessor():
         # Calculate intensity
         totalColor = cvGrayImage.sum()
         avgColor = totalColor / len(grayBytes)
-        colorIntensity = 'dark'
-
-        if(avgColor < 127):
-            colorIntensity = 'light'
+       
+        colorIntensity = 'dark' if avgColor < 127 else 'light'
 
         logging.info('Color intensity: {}'.format(colorIntensity))
         
