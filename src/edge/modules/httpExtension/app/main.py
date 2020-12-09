@@ -20,16 +20,12 @@ def init_logging():
 
  # Get application arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('-p', nargs=1, metavar=('http_server_port'),
-                                help='Port number to listen on.')
+parser.add_argument('-p', nargs=1, metavar=('http_server_port'), help='Port number to listen on.', type=int, default=8080)
 
 _arguments = parser.parse_args()
 
 # Default to port 8080
-httpServerPort = 8080
-# Get port number
-if (_arguments.p is not None):
-    httpServerPort = _arguments.p[0]
+httpServerPort = _arguments.p
 
 app = Flask(__name__)
 
@@ -45,7 +41,7 @@ def score():
     try:
         image_data = request.get_data()
         
-        result = processor.ProcessImages(image_data)
+        result = processor.process_images(image_data)
 
         if(result is not None):
             respBody = {

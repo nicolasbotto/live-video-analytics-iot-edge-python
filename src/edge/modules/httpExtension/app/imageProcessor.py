@@ -10,7 +10,7 @@ class ImageProcessor():
     def __init__(self):
         return
     
-    def ProcessImages(self, imgBytes):
+    def process_images(self, imgBytes):
         try:
             # Read image raw bytes
             imgBuf = io.BytesIO(imgBytes)
@@ -23,10 +23,8 @@ class ImageProcessor():
             # Calculate intensity
             totalColor = cvGrayImage.sum()
             avgColor = totalColor / len(grayBytes)
-            colorIntensity = 'dark'
-
-            if(avgColor < 127):
-                colorIntensity = 'light'
+            
+            colorIntensity = 'dark' if avgColor < 127 else 'light'
 
             logging.info('Color intensity: {}'.format(colorIntensity))
 
