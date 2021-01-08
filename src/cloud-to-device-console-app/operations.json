@@ -1,5 +1,5 @@
 {
-    "apiVersion": "1.0",
+    "apiVersion": "2.0",
     "operations": [
         {
             "opName": "GraphTopologyList",
@@ -24,7 +24,7 @@
         {
             "opName": "GraphTopologySet",
             "opParams": {
-                "topologyUrl": "https://raw.githubusercontent.com/Azure/live-video-analytics/master/MediaGraph/topologies/motion-detection/topology.json"
+                "topologyUrl": "https://raw.githubusercontent.com/Azure/live-video-analytics/master/MediaGraph/topologies/motion-detection/2.0/topology.json"
             }
         },
         {
