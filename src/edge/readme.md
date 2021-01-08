@@ -11,20 +11,32 @@ This file is a deployment manifest template that has the following modules defin
 * rtspsim - [RTSP simulator module](https://github.com/Azure/live-video-analytics/tree/master/utilities/rtspsim-live555)
 * lvaEdge - Live video analytics on IoT Edge module
 
-### deployment.yolov3.template.json
+### deployment.customvision.template.json
 
-Besides the modules already defined in deployment.template.json, this deployment manifest template references the [yolov3 module](https://github.com/Azure/live-video-analytics/tree/master/utilities/video-analysis/yolov3-onnx) that hosts the YoloV3 ONNX model with http server.
+In addition to the modules defined in deployment.template.json, this deployment manifest template includes the toy truck detector model built using [Custom vision](https://www.customvision.ai/). This is an IoT Edge module that runs the Custom Vision model behind an HTTP endpoint.This template is used in [this](https://docs.microsoft.com/en-us/azure/media-services/live-video-analytics-edge/custom-vision-tutorial) tutorial that gives you training data for the toy truck detector custom vision model and outlines instructions on training the model, uploading to your own Azure container registry and deploying it to the edge. 
 
 ### deployment.grpcyolov3icpu.template.json  
-This deployment manifest changes the consumed yolov3 service over the previous. It uses gRPC protocol to communicate with the yolov3 extension.
+
+In addition to the modules defined in deployment.template.json, this deployment manifest template includes this [yolov3 module](https://github.com/Azure/live-video-analytics/tree/master/utilities/video-analysis/notebooks/Yolo/yolov3/yolov3-grpc-icpu-onnx/lvaextension). This IoT Edge module runs the YoloV3 ONNX model behind a gRPC endpoint. This template is used in [this](https://aka.ms/lva-grpc-quickstart) quickstart.
 
 ### deployment.objectCounter.template.json
 
-Besides the modules already defined in deployment.yolov3.template.json, this deployment manifest template references the sample objectCounter module (source code for which can be found in ./modules/objectCounter). This template also has message routes defined to send messages from the lvaEdge module to the objectCounter module and vice versa, to enable the scenario of recording video clips when objects of a specified type and above a specified threshold value are found.
+In addition to the modules defined in deployment.yolov3.template.json, this deployment manifest template includes the sample objectCounter module (source code for which can be found in ./modules/objectCounter). This template also has message routes defined to send messages from the lvaEdge module to the objectCounter module and vice versa, to enable the scenario of recording video clips when objects of a specified type (at a confidence measure above a specified threshold value) are found. See [this](https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/event-based-video-recording-tutorial) tutorial on using this template.
+
+### deployment.openvino.template.json  
+
+In addition to the modules defined in deployment.template.json, this deployment manifest template includes the [OpenVINO™ Model Server – AI Extension](https://aka.ms/lva-intel-ovms) module. This inference server module contains the OpenVINO™ Model Server (OVMS), an inference server powered by the OpenVINO™ toolkit, that is highly optimized for computer vision workloads and developed for Intel architectures. This template is used in [this](https://aka.ms/lva-intel-ovms-tutorial) tutorial.
+
+### deployment.spatialAnalysis.template.json  
+
+In addition to the modules defined in deployment.template.json, this deployment manifest template includes the [Computer Vision for spatial analysis AI module from Azure Cognitive Services](https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/spatial-analysis-container?tabs=azure-stack-edge). This module supports operations that enable you to count people in a designated zone within the camera’s field of view, to track when a person crosses a designated line or area, or when people violate a distance rule. This template is used in [this](https://aka.ms/lva-spatial-analysis) tutorial.
+
+### deployment.yolov3.template.json
+
+In addition to the modules defined in deployment.template.json, this deployment manifest template includes the [yolov3 module](https://github.com/Azure/live-video-analytics/tree/master/utilities/video-analysis/yolov3-onnx). This is an IoT Edge module that runs the YoloV3 ONNX model behind an HTTP endpoint.
 
 ### deployment.composite.template.json
-
-In addition to the modules defined in deployment.template.json, this deployment manifest template includes the [yolov3 module](https://github.com/Azure/live-video-analytics/tree/master/utilities/video-analysis/yolov3-onnx) and the [tinyyolov3 module](https://github.com/Azure/live-video-analytics/tree/master/utilities/video-analysis/notebooks/Yolo/tinyyolov3/tinyyolov3-grpc-icpu-onnx). This is an IoT Edge module that runs both the YoloV3 ONNX and Tiny YoloV3 ONNX models behind gRPC endpoints.
+In addition to the modules defined in deployment.template.json, this deployment manifest template includes the yolov3 module and the tinyyolov3 module. This is an IoT Edge module that runs both the YoloV3 ONNX and Tiny YoloV3 ONNX models behind gRPC endpoints.
 
 ## Deployment manifest template variables
 
