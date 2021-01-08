@@ -22,6 +22,10 @@ This deployment manifest changes the consumed yolov3 service over the previous. 
 
 Besides the modules already defined in deployment.yolov3.template.json, this deployment manifest template references the sample objectCounter module (source code for which can be found in ./modules/objectCounter). This template also has message routes defined to send messages from the lvaEdge module to the objectCounter module and vice versa, to enable the scenario of recording video clips when objects of a specified type and above a specified threshold value are found.
 
+### deployment.composite.template.json
+
+In addition to the modules defined in deployment.template.json, this deployment manifest template includes the [yolov3 module](https://github.com/Azure/live-video-analytics/tree/master/utilities/video-analysis/yolov3-onnx) and the [tinyyolov3 module](https://github.com/Azure/live-video-analytics/tree/master/utilities/video-analysis/notebooks/Yolo/tinyyolov3/tinyyolov3-grpc-icpu-onnx). This is an IoT Edge module that runs both the YoloV3 ONNX and Tiny YoloV3 ONNX models behind gRPC endpoints.
+
 ## Deployment manifest template variables
 
 The deployment manifest templates contains several variables (look for '$' symbol). The values for these variables need to be specified in the .env file, which like this
