@@ -80,7 +80,7 @@ Let's decompose it a bit:
 * `-b`: the size of the batch
 
 ### Updating references into Topologies, to target the gRPC Extension Address
-The [gRPCExtension topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGraph/topologies/grpcExtension/topology.json) must define an gRPC Extension Address:
+The [topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGraph/topologies/motion-with-grpcExtension/topology.json) must define an gRPC Extension Address:
 
 * gRPC Extension Address Parameter
 ```
