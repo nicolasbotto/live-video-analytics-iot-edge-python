@@ -176,6 +176,11 @@ gRPC extension module:
 }
 ```
 
+**Note:** You will need to update the **apiVersion** parmater as well when using LVA 2.0 module.
+```
+"@apiVersion": "2.0"
+```
+
 ## Upload Docker image to Azure container registry
 
 Follow instructions in [Push and Pull Docker images  - Azure Container Registry](http://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-docker-cli) to save your image for later use on another machine.
