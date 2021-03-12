@@ -64,7 +64,7 @@ Let's decompose it a bit:
 * `-p`: the port the http extension server will listen on
 
 ### Updating references into Topologies, to target the Http inferencing container address
-The [topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGraph/topologies/httpExtension/topology.json) must define an inferencing URL:
+The [topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGraph/topologies/httpExtension/2.0/topology.json) must define an inferencing URL:
 
 * Http Extension inferencing URL Parameter
 ```
@@ -78,7 +78,7 @@ The [topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGr
 * Configuration
 ```
 {
-  "@apiVersion": "1.0",
+  "@apiVersion": "2.0",
   "name": "TopologyName",
   "properties": {
     "processors": [
@@ -93,6 +93,10 @@ The [topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGr
             "username": "${inferencingUserName}",
             "password": "${inferencingPassword}"
           }
+        },
+        "samplingOptions": {
+          "skipSamplesWithoutAnnotation": "false",
+          "maximumSamplesPerSecond": "5"
         },
         "image": {
           "scale":
