@@ -11,7 +11,10 @@ from azure.iot.device.aio import IoTHubModuleClient
 from azure.iot.device import Message
 import logging
 
-OBJECT_TAG = 'truck'
+OBJECT_TYPE_VALUE = 'truck'
+OBJECT_TYPE_NAME = 'type'
+OBJECT_TAG_NAME = 'color'
+OBJECT_TAG_VALUE = 'white'
 OBJECT_CONFIDENCE = 0.5
 TWIN_CALLBACKS = 0
 
@@ -28,8 +31,14 @@ async def main():
                 try:
                     data = await module_client.receive_twin_desired_properties_patch()  # blocking call
                     print('The data in the desired properties patch was: %s' % data)
-                    if 'objectTag' in data:
-                        OBJECT_TAG = data['objectTag']
+                    if 'objectTagName' in data:
+                        OBJECT_TAG_NAME = data['objectTagName']
+                    if 'objectTagValue' in data:
+                        OBJECT_TAG_VALUE = data['objectTagValue']
+                    if 'objectTypeName' in data:
+                        OBJECT_TYPE_NAME = data['objectTypeName']
+                    if 'objectTypeValue' in data:
+                        OBJECT_TYPE_VALUE = data['objectTypeValue']
                     if 'objectConfidence' in data:
                         OBJECT_CONFIDENCE = data['objectConfidence']
                     TWIN_CALLBACKS += 1
@@ -54,33 +63,46 @@ async def main():
                     #
 
                     try:
-                        detected_objects = data['inferences']
-                        for inference in detected_objects:
-                            entity = inference['entity']
-                            tag = entity['tag']
+                        found = False
+                        for inference in data["inferences"]:
+                            confidence = inference["entity"]["tag"]["confidence"]
+                            hasColor = hasType = False
+                            for att in inference["entity"]["attributes"]:
+                                if (att["name"] == OBJECT_TAG_NAME and att["value"] == OBJECT_TAG_VALUE):
+                                    hasColor = True
+                                if (att["name"] == OBJECT_TYPE_NAME and att["value"] == OBJECT_TYPE_VALUE):
+                                    hasType = True
                             
-                            if (tag['value'] == OBJECT_TAG) and (tag['confidence'] > OBJECT_CONFIDENCE):
-                                count += 1
-
-                        if count > 0:
-                            output_message_string = json.dumps(dict({'count': count}))
+                            if(hasColor and hasType and confidence >= OBJECT_CONFIDENCE):
+                                found = True
+                                break
+                        
+                        if(found):
+                            output_message_string = json.dumps(
+                                dict(
+                                    {
+                                        'confidence': confidence, 
+                                        OBJECT_TAG_NAME : OBJECT_TAG_VALUE, 
+                                        OBJECT_TYPE_NAME : OBJECT_TAG_VALUE
+                                    }
+                                ))
+                            print('result message: {}'.format(output_message_string))
                             output_message = Message(output_message_string, content_encoding='utf-8')
                             
                             subject = input_message.custom_properties['subject']
                             graph_instance_signature = '/graphInstances/'
+                            output_message.custom_properties['eventTime'] = input_message.custom_properties['eventTime']
+                            await module_client.send_message_to_output(output_message, "objectCounterTrigger")
 
-                            if graph_instance_signature in subject:
-                                output_message.custom_properties['eventTime'] = input_message.custom_properties['eventTime']
-                                await module_client.send_message_to_output(output_message, "objectCountTrigger")
-                    except:
-                        print('No inferences array found for message.')
+                    except Exception as err:
+                        print('Error processing inferences: {}'.format(err))
 
         def stdin_listener():
             while True:
                 try:
                     selection = input("Press Q to quit\n")
                     if selection == "Q" or selection == "q":
-                        print("Quitting...")
+                        print("Quiting...")
                         break
                 except:
                     time.sleep(10)
