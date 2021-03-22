@@ -83,7 +83,7 @@ async def main():
                                     {
                                         'confidence': confidence, 
                                         OBJECT_TAG_NAME : OBJECT_TAG_VALUE, 
-                                        OBJECT_TYPE_NAME : OBJECT_TAG_VALUE
+                                        OBJECT_TYPE_NAME : OBJECT_TYPE_VALUE
                                     }
                                 ))
                             print('result message: {}'.format(output_message_string))
