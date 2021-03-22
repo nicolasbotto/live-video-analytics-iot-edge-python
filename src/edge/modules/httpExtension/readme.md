@@ -64,7 +64,7 @@ Let's decompose it a bit:
 * `-p`: the port the http extension server will listen on
 
 ### Updating references into Topologies, to target the Http inferencing container address
-The [topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGraph/topologies/httpExtension/topology.json) must define an inferencing URL:
+The [topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGraph/topologies/httpExtension/2.0/topology.json) must define an inferencing URL:
 
 * Http Extension inferencing URL Parameter
 ```
@@ -75,12 +75,8 @@ The [topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGr
   "default": "https://<REPLACE-WITH-IP-OR-CONTAINER-NAME>/score"
 }
 ```
-* Configuration
+* Note the configuration of the extension processor
 ```
-{
-  "@apiVersion": "1.0",
-  "name": "TopologyName",
-  "properties": {
     "processors": [
       {
         "@type": "#Microsoft.Media.MediaGraphHttpExtension",
@@ -94,6 +90,10 @@ The [topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGr
             "password": "${inferencingPassword}"
           }
         },
+        "samplingOptions": {
+          "skipSamplesWithoutAnnotation": "false",
+          "maximumSamplesPerSecond": "5"
+        },
         "image": {
           "scale":
           {
@@ -101,17 +101,13 @@ The [topology](https://github.com/Azure/live-video-analytics/blob/master/MediaGr
             "width": "416",
             "height": "416"
           },
-          "format":
-          {
-            "@type": "#Microsoft.Media.MediaGraphImageFormatEncoded",
-            "encoding": "jpeg",
-            "quality": "90"
+          "format": {
+            "@type": "#Microsoft.Media.MediaGraphImageFormatBmp"
           }
         }
       }
     ]
-  }
-}
+
 ```
 ## Using the http extension container
 
